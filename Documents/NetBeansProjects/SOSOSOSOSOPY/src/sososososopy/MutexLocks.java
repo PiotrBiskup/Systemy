@@ -33,13 +33,13 @@ public class MutexLocks
 	public void lock(Process processToLock) {
 		if(!getState()) {
 			//zamek jest otwarty, proces zamyka zamek i rusza dalej
-			setState(true);
+			this.setState(true);
 			this.lockedProcess = processToLock;
 		} else {
 			//zamek jest zamkniety wiec proces wedruje do kolejki i ustawiany jest jego bit blocked
 			waitingProcesses.offer(processToLock);
-			processToLock.SetBlocked(true);  // to ustawiamy na true zeby wiadomo bylo ze proces jest zablokowany
-			processToLock.SetState(1); // to jest metoda od prcesow i nie wiem jeszcze jak oznaczyc proces czekajacy
+			processToLock.set_if_lock(1);  // to ustawiamy na true zeby wiadomo bylo ze proces jest zablokowany
+			processToLock.SetState(1); // zmiana z ready na waiting
 			
 		}
 	}
@@ -52,7 +52,7 @@ public class MutexLocks
 			if(!waitingProcesses.isEmpty()) 
                         {
 				waitingProcesses.peek().SetState(0); //to jest metoda od prcesow i tu zmieniamy procesowi na szczycie kolejki procesow czekajacych stan na ready
-				waitingProcesses.poll().SetBlocked(false); // to ustawiamy na false zeby wiadomo bylo ze proces juz nie jest zablokowany (funkcja poll() zwraca gore kolejki procesow czekajacych i usuwa go z niej)
+				waitingProcesses.poll().set_if_lock(0); // to ustawiamy na false zeby wiadomo bylo ze proces juz nie jest zablokowany (funkcja poll() zwraca gore kolejki procesow czekajacych i usuwa go z niej)
 			}
 		}
 	} 
